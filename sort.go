@@ -73,3 +73,7 @@ func QuickSort(arr []int, l, r int) {
 
 	}
 }
+
+func Heapsort() {
+
+}
