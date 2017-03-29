@@ -52,17 +52,17 @@ func Quick2Sort(values []int) {
 	Quick2Sort(values[:head])
 	Quick2Sort(values[head+1:])
 }
-func QuickSort(arr []int, l, r int) {
+func QuickSort(arr []int, l, r int) { //定义一个快速排序
 	if l < r {
 		i := l //左指针
 		j := r //右指针
 		key := arr[i]
 		for i < j {
-			for i < j && arr[j] > key {
+			for i < j && arr[j] > key { //从右往左，找出第一个比基准小的索引
 				j--
 			}
 			arr[i] = arr[j]
-			for i < j && arr[i] < key {
+			for i < j && arr[i] < key { //从左往右，找出第一个比基准大的索引
 				i++
 			}
 			arr[j] = arr[i]

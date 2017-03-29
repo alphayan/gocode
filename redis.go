@@ -6,11 +6,12 @@ import (
 	"github.com/garyburd/redigo/redis"
 	_ "github.com/go-sql-driver/mysql"
 	"reflect"
+	"strconv"
 )
 
-var c redis.Conn
+var c redis.Conn //定义redis连接
 var err error
-var db *sql.DB
+var db *sql.DB //定义mysql连接
 
 type CashierData struct {
 	Id              int    `json:"id"`
@@ -50,7 +51,7 @@ func init() {
 	checkouterr(err)
 }
 func HgetRedis() {
-	v, err := redis.String(c.Do("GET", "name")) //返回的是ASCII码
+	v, err := redis.String(c.Do("GET", "name")) //返回的是ASCII码,需要用string转型
 	checkouterr(err)
 	fmt.Println(v)
 }
@@ -59,32 +60,66 @@ func HsetRedis() {
 	checkouterr(err)
 	fmt.Println(v)
 }
-func FindMysql() {
+func Hmset(a interface{}) {
+	var b []interface{}
+	args, _ := a.([]map[string]string) //类型断言
+	for i, j := range args {
+		//fmt.Println(i, j)
+		argss := []string{"mp" + strconv.Itoa(i)}
+		for k, v := range j {
+			argss = append(argss, k, v) //将每个map转换成[]string
+		}
+		//fmt.Println(argss)
+		b = append(b, argss) //将string切片转换成切片的切片
+	}
+
+	for bi, _ := range b {
+		d := make([]interface{}, 0)
+		for _, bv := range b[bi].([]string) { //因为HMSET的参数为...interface{}型所以需要转换[]string到[]interface{}
+			d = append(d, bv)
+		}
+
+		va, err := c.Do("HMSET", d...)
+		checkouterr(err)
+		fmt.Println(va)
+	}
+}
+func Hgetall() { //取出map
+	v, err := redis.Strings(c.Do("KEYS", "*")) //获取所有的key
+	checkouterr(err)
+	fmt.Println(v)
+	for i := 0; i < 14; i++ {
+		v, err := redis.Strings(c.Do("HGETALL", "mp"+strconv.Itoa(i)))
+		checkouterr(err)
+		fmt.Println("第", i, "次:", v)
+	}
+
+}
+func FindMysql() interface{} {
 	//cashier := CashierData{}
 	rows, _ := db.Query("select * from cashier where mch_id=1276316801")
 	checkouterr(err)
 	columns, _ := rows.Columns()
 	fmt.Println(len(columns))
-	values := make([]sql.RawBytes, len(columns)) //定义值切片
-	scanArgs := make([]interface{}, len(values)) //定义切片
+	values := make([]sql.RawBytes, len(columns)) //定义切片，用了存放最后的查询结果，类型为[]byte
+	scanArgs := make([]interface{}, len(values)) //定义切片，用了对应每个切片内元素的地址
 	for i := range values {
-		scanArgs[i] = &values[i]
+		scanArgs[i] = &values[i] //应该是查询只能使用指针型，将两个切片对应起来
 	}
 	r := []string{}
 	m := make(map[string]string)
-	//n:=[]m
+	n := make([]map[string]string, 0)
 	for rows.Next() {
-		//j++
-		//cashier:=[]CashierData{}
-
 		rows.Scan(scanArgs...)
 		for k, v := range values {
 			r = append(r, string(v))
 			m[columns[k]] = string(v)
 		}
+		n = append(n, m) //可以通过反射将结果存到结构体内部，反射速度慢，要分类插入，代码量巨大，可以直接使用orm
 
 	}
-	fmt.Println(m)
+	//fmt.Println(n)
+	return n
 }
 func RedisClose() {
 	c.Close()
@@ -99,19 +134,13 @@ func Test() {
 	type A struct {
 		Name, Age string
 	}
-	c := []A{}
-	//a := A{}
+	//c := []A{}
+	a := A{}
 	//b := []string{"Jim", "15", "Tom", "16", "Mary", "17"}
-	//c[0] = A{b[0], b[1]}
-	v := reflect.ValueOf(&c).Elem().Type()
+
+	v := reflect.ValueOf(a)
 	fmt.Println(v)
-	v1 := reflect.TypeOf(c).Elem()
-	v2 := reflect.ValueOf(v1).Elem().Type()
-	fmt.Println(v1, v2)
-	//for i := 0; i < reflect.ValueOf(&c).Elem().NumField(); i++ {
-	//	fmt.Println(i, v.Field(i).Name)
-	//}
-	//v2 := reflect.ValueOf(c).Elem()
-	//v2.FieldByName().SetString(b[0])
+	v1 := reflect.Indirect(v)
+	fmt.Println(v1)
 
 }
