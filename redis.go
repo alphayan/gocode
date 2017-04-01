@@ -47,8 +47,6 @@ type CashierData struct {
 func init() {
 	c, err = redis.Dial("tcp", "127.0.0.1:6379") //定义redis
 	checkouterr(err)
-	db, err = sql.Open("mysql", "cdb_outerroot:wei2016KAI@tcp(56dd3ccb68390.gz.cdb.myqcloud.com:16862)/wechatpayv2?charset=utf8")
-	checkouterr(err)
 }
 func HgetRedis() {
 	v, err := redis.String(c.Do("GET", "name")) //返回的是ASCII码,需要用string转型
