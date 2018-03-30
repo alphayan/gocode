@@ -31,6 +31,7 @@ func BubbleSort(n int) {
 	fmt.Println("冒泡排序后", arr)
 }
 
+//定义一个快速排序函数
 func Quick2Sort(values []int) {
 	if len(values) <= 1 {
 		return
@@ -52,28 +53,63 @@ func Quick2Sort(values []int) {
 	Quick2Sort(values[:head])
 	Quick2Sort(values[head+1:])
 }
-func QuickSort(arr []int, l, r int) { //定义一个快速排序
+
+//定义一个快速排序
+func QuickSort(arr []int, l, r int) {
 	if l < r {
 		i := l //左指针
 		j := r //右指针
 		key := arr[i]
 		for i < j {
-			for i < j && arr[j] > key { //从右往左，找出第一个比基准小的索引
+			for i < j && arr[j] >= key { //从右往左，找出第一个比基准小的索引
 				j--
 			}
 			arr[i] = arr[j]
-			for i < j && arr[i] < key { //从左往右，找出第一个比基准大的索引
+			for i < j && arr[i] <= key { //从左往右，找出第一个比基准大的索引
 				i++
 			}
 			arr[j] = arr[i]
 		}
-		array[i] = key
-		QuickSort(array, l, i-1)
-		QuickSort(array, i+1, r)
-
+		arr[i] = key
+		QuickSort(arr, l, i-1)
+		QuickSort(arr, i+1, r)
+		fmt.Println(arr)
 	}
 }
 
+//定义一个堆排序
 func Heapsort() {
 
+}
+
+//定义一个插入排序
+func insertSort(arr []int, rlen int) {
+	var tem int
+	for i := 1; i < rlen; i++ {
+		j := i - 1
+		tem = arr[i]
+		for j >= 0 && tem < arr[j] {
+			arr[j+1] = arr[j]
+			j--
+			fmt.Println("j--", j)
+			fmt.Println(arr)
+		}
+		arr[j+1] = tem
+		fmt.Println(arr)
+	}
+	fmt.Println(arr)
+}
+
+//选择排序
+func selectionSort(arr []int, rlen int) {
+	for i := 0; i < rlen-1; i++ { //有序区
+		minIndex := i
+		for j := i + 1; j < rlen; j++ { //无序区
+			if arr[j] < arr[minIndex] {
+				minIndex = j
+			}
+		}
+		arr[i], arr[minIndex] = arr[minIndex], arr[i]
+	}
+	fmt.Println(arr)
 }

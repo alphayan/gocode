@@ -3,10 +3,11 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/garyburd/redigo/redis"
-	_ "github.com/go-sql-driver/mysql"
 	"reflect"
 	"strconv"
+
+	"github.com/garyburd/redigo/redis"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var c redis.Conn //定义redis连接
@@ -44,7 +45,7 @@ type CashierData struct {
 
 }
 
-func init() {
+func initRedis() {
 	c, err = redis.Dial("tcp", "127.0.0.1:6379") //定义redis
 	checkouterr(err)
 }
