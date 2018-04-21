@@ -1,20 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"gocode/datastructure"
+)
 
 func main() {
-	// BubbleSort(20)
-	r := Rand(10)
-	fmt.Println(r)
-	//QuickSort(r, 0, 9)
-	selectionSort(r, len(r))
-	//fmt.Println(r)
-	//HsetRedis()
-	//HgetRedis()
-	//defer RedisClose()
-	//Hmset(FindMysql())
-	//Hgetall()
-	//RedisClose()
-	//Test()
-	//Goruntime1()
+	l := datastructure.NewLinkList()
+	for i := 0; i < 10; i++ {
+		n := new(datastructure.Node)
+		n.Data = i
+		l.AppendTail(n)
+	}
+	for i := 0; i < 10; i++ {
+		fmt.Println(l.GetNode(i))
+	}
+	fmt.Println(l.Size())
 }
