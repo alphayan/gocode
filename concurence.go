@@ -15,7 +15,7 @@ func Goruntime() {
 		}(ch, slic, i)
 	}
 
-	for k, _ := range ch {
+	for k := range ch {
 		fmt.Println("ch", <-ch[k])
 	}
 }
@@ -26,14 +26,14 @@ func Goruntime1() {
 	for i := 0; i < 10; i++ {
 		go func(c chan int, s []int, j int) {
 			fmt.Println("j", s[j])
-			c <- i
+			c <- j
 		}(ch, slic, i)
 
 	}
-	//带缓冲的channel需要关闭，要不然会死锁
+	//带缓冲的channl需要关闭，要不然会死锁
 	for i := range ch {
-		m++
 		fmt.Println("ch", i)
+		m++
 		if m >= 10 {
 			close(ch)
 		}
