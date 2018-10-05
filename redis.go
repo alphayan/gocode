@@ -46,7 +46,7 @@ type CashierData struct {
 }
 
 func initRedis() {
-	c, err = redis.Dial("tcp", "127.0.0.1:6379") //定义redis
+	c, err = redis.Dial("tcp", "192.168.0.105:6379") //定义redis
 	checkouterr(err)
 }
 func HgetRedis() {
@@ -141,5 +141,4 @@ func Test() {
 	fmt.Println(v)
 	v1 := reflect.Indirect(v)
 	fmt.Println(v1)
-
 }
